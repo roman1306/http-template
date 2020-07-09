@@ -1,18 +1,23 @@
 package com.epam.izh.rd.online;
 
 import com.epam.izh.rd.online.entity.Pokemon;
+import com.epam.izh.rd.online.service.PokemonFetchingService;
+import com.epam.izh.rd.online.service.PokemonFightingClubService;
 import com.epam.izh.rd.online.service.SimplePokemonFetchingService;
 import com.epam.izh.rd.online.service.SimplePokemonFightingClubService;
 
 public class Http {
     public static void main(String[] args) {
-        SimplePokemonFetchingService simplePokemonFetchingService = new SimplePokemonFetchingService();
-        SimplePokemonFightingClubService simplePokemonFightingClubService = new SimplePokemonFightingClubService();
+        PokemonFetchingService pokemonFetchingService =
+                new SimplePokemonFetchingService("https://pokeapi.co/api/v2/");
 
-        Pokemon pokemon1 = simplePokemonFetchingService.fetchByName("charizard");
-        Pokemon pokemon2 = simplePokemonFetchingService.fetchByName("charmeleon");
+        PokemonFightingClubService pokemonFightingClubService =
+                new SimplePokemonFightingClubService(pokemonFetchingService);
 
-        simplePokemonFightingClubService.doBattle(pokemon1, pokemon2);
+        Pokemon pokemon1 = pokemonFetchingService.fetchByName("pikachu");
+        Pokemon pokemon2 = pokemonFetchingService.fetchByName("slowpoke");
+
+        pokemonFightingClubService.doBattle(pokemon1, pokemon2);
 
     }
 }

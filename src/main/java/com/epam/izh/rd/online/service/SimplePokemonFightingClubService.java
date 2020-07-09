@@ -7,20 +7,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class SimplePokemonFightingClubService implements PokemonFightingClubService {
+    private final PokemonFetchingService pokemonFetchingService;
+
+    public SimplePokemonFightingClubService(PokemonFetchingService pokemonFetchingService) {
+        this.pokemonFetchingService = pokemonFetchingService;
+    }
+
     @Override
     public Pokemon doBattle(Pokemon p1, Pokemon p2) {
-            Pokemon from = p1.getPokemonId() > p2.getPokemonId() ? p1 : p2;
-            Pokemon to = p1.getPokemonId() < p2.getPokemonId() ? p1 : p2;;
-            Pokemon pokemonBuffer;
+        Pokemon from = p1.getPokemonId() > p2.getPokemonId() ? p1 : p2;
+        Pokemon to = p1.getPokemonId() < p2.getPokemonId() ? p1 : p2;
+        Pokemon pokemonBuffer;
 
-            while (from.getHp() > 0) {
-                System.out.println("Pokemon " + from.getPokemonName() + " attacking " + to.getPokemonName());
-                doDamage(from, to);
-                System.out.println("health balance "+ to.getPokemonName() + to.getHp() + "\n");
-                pokemonBuffer = from;
-                from = to;
-                to = pokemonBuffer;
-            }
+        while (from.getHp() > 0) {
+            doDamage(from, to);
+            pokemonBuffer = from;
+            from = to;
+            to = pokemonBuffer;
+        }
 
         showWinner(to);
         return to;
@@ -28,12 +32,11 @@ public class SimplePokemonFightingClubService implements PokemonFightingClubServ
 
     @Override
     public void showWinner(Pokemon winner) {
-        SimplePokemonFetchingService pokemonFetchingService = new SimplePokemonFetchingService();
-        byte[] pokemonImage = pokemonFetchingService.getPokemonImage(winner.getPokemonName());
-        String path = "src/winner.png";
+        byte[] pokemonImage = this.pokemonFetchingService.getPokemonImage(winner.getPokemonName());
+        String pathForWinnerImage = "src/winners/" + winner.getPokemonName() + ".png";
 
-        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(path))) {
-            out.write(pokemonImage);
+        try (BufferedOutputStream writer = new BufferedOutputStream(new FileOutputStream(pathForWinnerImage))) {
+            writer.write(pokemonImage);
         } catch (IOException e) {
             e.printStackTrace();
         }
